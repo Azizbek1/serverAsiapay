@@ -12,7 +12,7 @@ const { register, login, requireSignin, read, update, adminMiddleware, deleteUse
 // ====== Multer ======
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/users');
+    cb(null, 'imagesuploads/users');
   },
   filename: (req, file, cb) => {
     cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
