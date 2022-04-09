@@ -26,13 +26,14 @@ exports.register = (req, res) => {
                         error: err,
                     });
                 }
-                res.json({
-                    message: `успешная регистрация ${success.name}`,
+                res.status(200).json({
+                    message: `успешная регистрация ${success.email}`,
                     user: newUser,
                 });
             });
         }
         else {
+           try{
             const { name, password, email } = req.body;
             User.findOne({ email }).exec((err, email) => {
                 if (email) {
@@ -44,15 +45,18 @@ exports.register = (req, res) => {
             const newUser = new User({ name, password, email });
             newUser.save((err, success) => {
                 if (err) {
-                    return res.status(400).json({
+                    return res.status(401).json({
                         error: err,
                     });
                 }
-                res.json({
+                res.status(200).json({
                     message: `успешная регистрация ${success.name}`,
                     user: newUser,
                 });
             });
+           }catch(err) {
+               console.log(err)
+           }
         }
     } catch (err) {
         console.log(err);
@@ -82,7 +86,7 @@ exports.login = (req, res) => {
             expiresIn: "1d",
         });
         const { _id, name, email, role } = user;
-        return res.json({
+        return res.status(200).json({
             token,
             user: { _id, name, email, role },
         });
@@ -122,11 +126,11 @@ exports.read = (req, res, next) => {
         if (user.image_name && user.image_name) {
             user.hashed_password = undefined
             user.salt = undefined
-            res.json(user);
+            res.statsus(200).json(user);
         } else {
             user.hashed_password = undefined
             user.salt = undefined
-            res.json(user);
+            res.status(200).json(user);
         }
     })
 }

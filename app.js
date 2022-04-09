@@ -2,9 +2,10 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
-const db = require('./helper/db');
+const dotenv = require('dotenv').config();
+const db = require('./helper/db')();
 const cookieParser = require('cookie-parser');
+const errorHandling = require('./middleware/ErrorHandlingMiddleware');
 const logger = require('morgan');
 const cors = require('cors');
 
@@ -22,12 +23,6 @@ const categoryRouter = require('./routes/category/MobileCat');
 const app = express();
 
 
-dotenv.config();
-
-/* DataBase  */
-db();
-
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -41,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(errorHandling);
 app.use(bodyParser.json());
 app.use('/imagesuploads', express.static(path.join(__dirname, 'imagesuploads')));
 
