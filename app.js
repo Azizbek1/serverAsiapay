@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv').config();
 const db = require('./helper/db')();
+const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const errorHandling = require('./middleware/ErrorHandlingMiddleware');
 const logger = require('morgan');
@@ -38,6 +39,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandling);
 app.use(bodyParser.json());
+app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
+
 app.use('/imagesuploads', express.static(path.join(__dirname, 'imagesuploads')));
 
 app.use('/', indexRouter);
