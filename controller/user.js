@@ -33,30 +33,30 @@ exports.register = (req, res) => {
             });
         }
         else {
-           try{
-            const { name, password, email } = req.body;
-            User.findOne({ email }).exec((err, email) => {
-                if (email) {
-                    return res.status(400).json({
-                        error: "электронная почта занята",
-                    });
-                }
-            });
-            const newUser = new User({ name, password, email });
-            newUser.save((err, success) => {
-                if (err) {
-                    return res.status(401).json({
-                        error: err,
-                    });
-                }
-                res.status(200).json({
-                    message: `успешная регистрация ${success.name}`,
-                    user: newUser,
+            try {
+                const { name, password, email } = req.body;
+                User.findOne({ email }).exec((err, email) => {
+                    if (email) {
+                        return res.status(400).json({
+                            error: "электронная почта занята",
+                        });
+                    }
                 });
-            });
-           }catch(err) {
-               console.log(err)
-           }
+                const newUser = new User({ name, password, email });
+                newUser.save((err, success) => {
+                    if (err) {
+                        return res.status(401).json({
+                            error: err,
+                        });
+                    }
+                    res.status(200).json({
+                        message: `успешная регистрация ${success.name}`,
+                        user: newUser,
+                    });
+                });
+            } catch (err) {
+                console.log(err)
+            }
         }
     } catch (err) {
         console.log(err);
@@ -93,10 +93,6 @@ exports.login = (req, res) => {
     });
 };
 
-exports.requireSignin = expressJwt({
-    secret: `SECRET123123213213213`,
-    algorithms: ["HS256"],
-});
 
 exports.adminMiddleware = (req, res, next) => {
     User.findById({ _id: req.user._id }).exec((err, user) => {
@@ -223,22 +219,24 @@ exports.update = async (req, res, next) => {
 }
 
 exports.deleteUser = async (req, res) => {
-    try {
-        const id = req.params.id
-        await User.findByIdAndDelete({ _id: id }, function (err, data) {
-            if (data.image_path && data.image_name) {
-                if (!err) {
-                    fs.unlinkSync(`./${data.image_path}`)
-                } else {
-                    console.log(err);
-                }
-            }
-            else{
-                res.json({message: `Удалено`})
-            }
+    const id = req.params.id
+    // await User.findOneAndDelete({ _id: id }, function (err, data) {
+    //     try {
+    //         if (data.image_path && data.image_name) {
+    //             if (!err) {
+    //                 fs.unlinkSync(`./${data.image_path}`)
+    //             } else {
+    //                 console.log(err);
+    //             }
+    //         }
+    //         res.send({ message: `Удалено` })
+    //     } catch (err) {
+    //         res.send({ message: `Ошибка` })
+    //     }
 
-        })
-    } catch (err) {
-        res.send({ message: "Удалено!" });
-    }
+    // })
+     User.findOneAndDelete({ _id: id })
+     .exec()
+     .then((counter) => res.json({message: "Удалено"}))
+     .catch((err) => next(err));
 }

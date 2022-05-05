@@ -54,10 +54,10 @@ router.post("/register", [
 ], upload.single('file'), register
 );
 
-router.get('/user/:id', requireSignin, read);
-router.delete('/user/:id', requireSignin, deleteUser);
-router.put('/user/update', requireSignin, upload.single('file'), update);
-router.put('/admin/update', requireSignin, upload.single('file'), adminMiddleware, update);
+router.get('/user/:id',  read);
+router.delete('/user/:id',  deleteUser);
+router.put('/user/update',  upload.single('file'), update);
+router.put('/admin/update',  upload.single('file'), adminMiddleware, update);
 
 
 
